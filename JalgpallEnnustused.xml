@@ -1,0 +1,65 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Jalgpalli ennustused" id="6ZltYAhAV8m3edrg5aPl">
+    <mxGraphModel dx="2054" dy="1137" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="GEFY3HQLMoDo2WqLWTgp-59" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=14;fillColor=#ffffff;strokeColor=#000000;" value="&lt;b&gt;User&lt;/b&gt;&lt;br&gt;&lt;div&gt;id: int&lt;br&gt;Username: String&lt;br&gt;email: String&lt;br&gt;password: String&lt;br&gt;role: Role&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Prediction()&lt;br&gt;Scoreboard()&lt;/div&gt;" vertex="1">
+          <mxGeometry height="230" width="240" x="250" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="GEFY3HQLMoDo2WqLWTgp-60" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=14;fillColor=#ffffff;strokeColor=#000000;" value="&lt;b&gt;Role&lt;/b&gt;&lt;div&gt;&lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;div&gt;USER&lt;br&gt;ADMIN&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="130" width="190" x="270" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="GEFY3HQLMoDo2WqLWTgp-61" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=14;fillColor=#ffffff;strokeColor=#000000;" value="&lt;b&gt;Team&lt;/b&gt;&lt;br&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;id: int&lt;br&gt;name: String&lt;br&gt;country: String&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="220" x="870" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="GEFY3HQLMoDo2WqLWTgp-62" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=14;fillColor=#ffffff;strokeColor=#000000;" value="&lt;b&gt;Tournament&lt;/b&gt;&lt;div&gt;id: int&lt;br&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;name: String&lt;/span&gt;&lt;/div&gt;&lt;div&gt;StartDate: Date&lt;br&gt;EndDate: Date&lt;/div&gt;&lt;div&gt;&lt;br&gt;AddGame()&lt;br&gt;LookScoreboard()&lt;/div&gt;" vertex="1">
+          <mxGeometry height="210" width="250" x="1230" y="625" as="geometry" />
+        </mxCell>
+        <mxCell id="GEFY3HQLMoDo2WqLWTgp-63" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=14;fillColor=#ffffff;strokeColor=#000000;" value="&lt;b&gt;Game&lt;/b&gt;&lt;br&gt;&lt;div&gt;id: int&lt;br&gt;round: Round&lt;/div&gt;&lt;div&gt;StartTime: DateTime&lt;br&gt;HomeTeamGoals: int&lt;br&gt;AwayTeamGoals: int&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Started()&lt;br&gt;TeamsConfirmed()&lt;br&gt;Happened()&lt;/div&gt;" vertex="1">
+          <mxGeometry height="260" width="270" x="870" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="GEFY3HQLMoDo2WqLWTgp-64" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=14;fillColor=#ffffff;strokeColor=#000000;" value="&lt;b&gt;Prediction&lt;/b&gt;&lt;br&gt;&lt;div&gt;id: int&lt;br&gt;PredictionTime: DateTime&lt;br&gt;HomeTeamGoals: int&lt;br&gt;AwayTeamGoals: int&lt;br&gt;Points: int&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;CountPoints()&lt;br&gt;Allowed()&lt;/div&gt;" vertex="1">
+          <mxGeometry height="240" width="270" x="540" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="GEFY3HQLMoDo2WqLWTgp-65" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=14;fillColor=#ffffff;strokeColor=#000000;" value="&lt;b&gt;Round&lt;/b&gt;&lt;br&gt;&lt;div&gt;ROUND OF 16&lt;br&gt;QUARTER FINAL&lt;br&gt;SEMI FINAL&lt;br&gt;FINAL&lt;/div&gt;" vertex="1">
+          <mxGeometry height="170" width="240" x="1210" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="GEFY3HQLMoDo2WqLWTgp-66" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=14;fillColor=#ffffff;strokeColor=#000000;" value="&lt;b&gt;Scoreboard&lt;/b&gt;&lt;br&gt;&lt;div&gt;id: int&lt;br&gt;place: int&lt;br&gt;points: int&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;update()&lt;br&gt;CalculatePosition()&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="190" width="230" x="1530" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="GEFY3HQLMoDo2WqLWTgp-67" edge="1" parent="1" source="GEFY3HQLMoDo2WqLWTgp-59" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;strokeColor=#000000;" target="GEFY3HQLMoDo2WqLWTgp-60" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="GEFY3HQLMoDo2WqLWTgp-68" edge="1" parent="1" source="GEFY3HQLMoDo2WqLWTgp-59" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;strokeColor=#000000;" target="GEFY3HQLMoDo2WqLWTgp-64" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="GEFY3HQLMoDo2WqLWTgp-70" edge="1" parent="1" source="GEFY3HQLMoDo2WqLWTgp-62" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;strokeColor=#000000;" target="GEFY3HQLMoDo2WqLWTgp-63" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="GEFY3HQLMoDo2WqLWTgp-71" edge="1" parent="1" source="GEFY3HQLMoDo2WqLWTgp-63" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;strokeColor=#000000;" target="GEFY3HQLMoDo2WqLWTgp-61" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="GEFY3HQLMoDo2WqLWTgp-72" edge="1" parent="1" source="GEFY3HQLMoDo2WqLWTgp-63" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;strokeColor=#000000;" target="GEFY3HQLMoDo2WqLWTgp-61" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="GEFY3HQLMoDo2WqLWTgp-73" edge="1" parent="1" source="GEFY3HQLMoDo2WqLWTgp-63" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;strokeColor=#000000;" target="GEFY3HQLMoDo2WqLWTgp-65" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="GEFY3HQLMoDo2WqLWTgp-74" edge="1" parent="1" source="GEFY3HQLMoDo2WqLWTgp-62" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;strokeColor=#000000;" target="GEFY3HQLMoDo2WqLWTgp-66" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="GEFY3HQLMoDo2WqLWTgp-94" edge="1" parent="1" source="GEFY3HQLMoDo2WqLWTgp-64" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;strokeColor=#000000;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="GEFY3HQLMoDo2WqLWTgp-63" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="840" y="600" />
+              <mxPoint x="840" y="610" />
+            </Array>
+            <mxPoint x="810" y="750" as="sourcePoint" />
+            <mxPoint x="860" y="825" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
