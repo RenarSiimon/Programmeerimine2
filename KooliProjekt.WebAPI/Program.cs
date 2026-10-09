@@ -16,11 +16,9 @@ namespace KooliProjekt.WebAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // 1. Saame ühenduse mergi appsettings.json failist
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-            // 2. Registreerime DbContext-i korrektselt
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
@@ -40,7 +38,6 @@ namespace KooliProjekt.WebAPI
 
             var app = builder.Build();
 
-            // 3. Täidame ülesande punkti 7: Automaatne migreerimine ja SeedData käivitamine
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
@@ -49,13 +46,11 @@ namespace KooliProjekt.WebAPI
                     SeedData.Initialize(services);
                 }
                 catch (Exception ex)
-                {
-                    // Vajadusel saab siin logida veateadet
+
                     Console.WriteLine($"Viga andmebaasi seadistamisel: {ex.Message}");
                 }
             }
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
