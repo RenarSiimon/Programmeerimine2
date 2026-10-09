@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 
 namespace KooliProjekt.WebAPI
 {
@@ -15,17 +16,15 @@ namespace KooliProjekt.WebAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            // 1. Saame ühenduse mergi appsettings.json failist
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-            // Add services to the container.
+            // 2. Registreerime DbContext-i korrektselt
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            {
-                options.UseSqlServer(connectionString);
-            });
+                options.UseSqlServer(connectionString));
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -41,6 +40,21 @@ namespace KooliProjekt.WebAPI
 
             var app = builder.Build();
 
+            // 3. Täidame ülesande punkti 7: Automaatne migreerimine ja SeedData käivitamine
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    SeedData.Initialize(services);
+                }
+                catch (Exception ex)
+                {
+                    // Vajadusel saab siin logida veateadet
+                    Console.WriteLine($"Viga andmebaasi seadistamisel: {ex.Message}");
+                }
+            }
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -49,7 +63,6 @@ namespace KooliProjekt.WebAPI
             }
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
