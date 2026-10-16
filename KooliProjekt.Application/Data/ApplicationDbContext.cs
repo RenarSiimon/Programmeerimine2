@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +15,14 @@ namespace KooliProjekt.Application.Data
             : base(options)
         {
         }
+
+        // DbSetid (ainult klassidele / olemitele, mitte enumitele)
+        public DbSet<Scoreboard> Scoreboards { get; set; }
+        public DbSet<Game> Games { get; set; }
+        public DbSet<Prediction> Predictions { get; set; }
+        public DbSet<Team> Teams { get; set; }
+        public DbSet<Tournament> Tournaments { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 
     public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
@@ -23,13 +30,11 @@ namespace KooliProjekt.Application.Data
         public ApplicationDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-
-            // Provides local fallback connection string for migration creation
             optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=KooliProjektDb;Trusted_Connection=True;MultipleActiveResultSets=true");
-
             return new ApplicationDbContext(optionsBuilder.Options);
         }
     }
+
     public static class SeedData
     {
         public static void Initialize(IServiceProvider serviceProvider)
@@ -37,16 +42,14 @@ namespace KooliProjekt.Application.Data
             using (var context = new ApplicationDbContext(
                 serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
             {
-                // Tee automaatselt ootel olevad migratsioonid (tekitab andmebaasi)
                 context.Database.Migrate();
 
-                // Kui andmebaasis on juba turniire olemas, ei tehta midagi
                 if (context.Set<Tournament>().Any())
                 {
                     return;
                 }
 
-                // 1. Kasutajad (User) - kasutame enumit Role
+                // 1. Kasutajad (User)
                 var users = new List<User>();
                 for (int i = 1; i <= 35; i++)
                 {
@@ -54,7 +57,6 @@ namespace KooliProjekt.Application.Data
                     {
                         Username = $"kasutaja{i}",
                         Email = $"kasutaja{i}@kooliprojekt.ee"
-                        // Kui User klassil on Role väli, saab määrata: Role = Role.USER
                     });
                 }
                 context.Set<User>().AddRange(users);
@@ -83,7 +85,7 @@ namespace KooliProjekt.Application.Data
                 context.Set<Team>().AddRange(teams);
                 context.SaveChanges();
 
-                // 4. Mängud (Game) - kui Game klassil on Round väli, saab kasutada: Round = Round.FINAL
+                // 4. Mängud (Game)
                 var games = new List<Game>();
                 for (int i = 1; i <= 35; i++)
                 {

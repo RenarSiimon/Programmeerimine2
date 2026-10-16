@@ -45,7 +45,7 @@ namespace KooliProjekt.WebAPI
                 {
                     SeedData.Initialize(services);
                 }
-                catch (Exception ex)
+                catch (Exception ex) {
 
                     Console.WriteLine($"Viga andmebaasi seadistamisel: {ex.Message}");
                 }
