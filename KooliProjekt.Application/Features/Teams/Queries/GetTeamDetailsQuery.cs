@@ -1,41 +1,45 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using KooliProjekt.Application.Data;
-using System.Collections.Generic;
+using KooliProjekt.Application.Infrastructure.Results;
+using KooliProjekt.Application.Dto;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace KooliProjekt.Application.Features.Teams.Queries
 {
-    public class GetTeamsListQuery : IRequest<List<TeamDto>>
+    public class GetTeamDetailsQuery : IRequest<OperationResult<TeamDto>>
     {
+        public int Id { get; set; }
     }
 
-    public class GetTeamsListQueryHandler : IRequestHandler<GetTeamsListQuery, List<TeamDto>>
+    public class GetTeamDetailsQueryHandler : IRequestHandler<GetTeamDetailsQuery, OperationResult<TeamDto>>
     {
         private readonly ApplicationDbContext _context;
 
-        public GetTeamsListQueryHandler(ApplicationDbContext context)
+        public GetTeamDetailsQueryHandler(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<List<TeamDto>> Handle(GetTeamsListQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<TeamDto>> Handle(GetTeamDetailsQuery request, CancellationToken cancellationToken)
         {
-            return await _context.Teams
+            var entity = await _context.Teams
+                .Where(t => t.Id == request.Id)
                 .Select(t => new TeamDto
                 {
                     Id = t.Id,
                     Name = t.Name
                 })
-                .ToListAsync(cancellationToken);
-        }
-    }
+                .FirstOrDefaultAsync(cancellationToken);
 
-    public class TeamDto
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
+            if (entity == null)
+            {
+                return OperationResult<TeamDto>.NotFound("Team not found.");
+            }
+
+            return OperationResult<TeamDto>.Success(entity);
+        }
     }
 }

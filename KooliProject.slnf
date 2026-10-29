@@ -1,0 +1,9 @@
+{
+  "solution": {
+    "path": "KooliProjekt.sln",
+    "projects": [
+      "KooliProjekt.Application\\KooliProjekt.Application.csproj",
+      "KooliProjekt.WebAPI\\KooliProjekt.WebAPI.csproj"
+    ]
+  }
+}

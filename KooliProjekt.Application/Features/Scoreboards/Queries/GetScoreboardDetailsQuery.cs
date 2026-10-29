@@ -1,19 +1,20 @@
-﻿using KooliProjekt.Application.Data;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using KooliProjekt.Application.Data;
+using KooliProjekt.Application.Dto;
+using KooliProjekt.Application.Infrastructure.Results;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
 
 namespace KooliProjekt.Application.Features.Scoreboards.Queries
 {
-    public class GetPredictionDetailsQuery : IRequest<ScoreboardDto>
+    public class GetScoreboardDetailsQuery : IRequest<OperationResult<ScoreboardDto>>
     {
         public int Id { get; set; }
     }
 
-    public class GetScoreboardDetailsQueryHandler : IRequestHandler<GetPredictionDetailsQuery, ScoreboardDto>
+    public class GetScoreboardDetailsQueryHandler : IRequestHandler<GetScoreboardDetailsQuery, OperationResult<ScoreboardDto>>
     {
         private readonly ApplicationDbContext _context;
 
@@ -22,17 +23,24 @@ namespace KooliProjekt.Application.Features.Scoreboards.Queries
             _context = context;
         }
 
-        public async Task<ScoreboardDto> Handle(GetPredictionDetailsQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<ScoreboardDto>> Handle(GetScoreboardDetailsQuery request, CancellationToken cancellationToken)
         {
-            return await _context.Scoreboards
-                .Where(s => s.Id == request.Id)
-                .Select(s => new ScoreboardDto
+            var scoreboard = await _context.Scoreboards
+                .Where(x => x.Id == request.Id)
+                .Select(x => new ScoreboardDto
                 {
-                    Id = s.Id,
-                    Place = s.Place,
-                    Points = s.Points
+                    Id = x.Id,
+                    Place = x.Place,
+                    Points = x.Points
                 })
                 .FirstOrDefaultAsync(cancellationToken);
+
+            if (scoreboard == null)
+            {
+                return OperationResult<ScoreboardDto>.NotFound("Scoreboard not found");
+            }
+
+            return OperationResult<ScoreboardDto>.Success(scoreboard);
         }
     }
 }

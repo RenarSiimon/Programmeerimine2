@@ -1,36 +1,51 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using KooliProjekt.Application.Data;
+using KooliProjekt.Application.Dto;
+using KooliProjekt.Application.Infrastructure.Results;
+using KooliProjekt.Application.Infrastructure.Paging;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using KooliProjekt.Application.Features.Prediction.Queries;
+using KooliProjekt.Application.Features.Teams.Queries;
 
 namespace KooliProjekt.Application.Features.Teams.Queries
 {
-    public class GetTeamDetailsQuery : IRequest<TeamDto>
+    public class GetTeamsListQuery : IRequest<OperationResult<PagedResult<TeamDto>>>
     {
-        public int Id { get; set; }
+        public int Page { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
     }
 
-    public class GetTeamDetailsQueryHandler : IRequestHandler<GetTeamDetailsQuery, TeamDto>
+    public class GetTeamsListQueryHandler : IRequestHandler<GetTeamsListQuery, OperationResult<PagedResult<TeamDto>>>
     {
         private readonly ApplicationDbContext _context;
 
-        public GetTeamDetailsQueryHandler(ApplicationDbContext context)
+        public GetTeamsListQueryHandler(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<TeamDto> Handle(GetTeamDetailsQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<PagedResult<TeamDto>>> Handle(GetTeamsListQuery request, CancellationToken cancellationToken)
         {
-            return await _context.Teams
-                .Where(t => t.Id == request.Id)
-                .Select(t => new TeamDto
+            var query = _context.Teams.AsQueryable();
+            var pagedEntities = await query.ToPagedResultAsync(request.Page, request.PageSize, cancellationToken);
+
+            var pagedResultDto = new PagedResult<TeamDto>
+            {
+                PageIndex = pagedEntities.PageIndex,
+                PageSize = pagedEntities.PageSize,
+                TotalCount = pagedEntities.TotalCount,
+                TotalPages = pagedEntities.TotalPages,
+                Results = pagedEntities.Results.Select(x => new TeamDto
                 {
-                    Id = t.Id,
-                    Name = t.Name
-                })
-                .FirstOrDefaultAsync(cancellationToken);
+                    Id = x.Id,
+                    Name = x.Name
+                }).ToList()
+            };
+
+            return OperationResult<PagedResult<TeamDto>>.Success(pagedResultDto);
         }
     }
 }

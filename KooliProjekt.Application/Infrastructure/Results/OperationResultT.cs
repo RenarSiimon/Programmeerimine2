@@ -1,28 +1,38 @@
 ﻿namespace KooliProjekt.Application.Infrastructure.Results
 {
-    public class OperationResult<T> : OperationResult
+    public class OperationResult<T>
     {
-        public T Value { get; set; }
+        public bool Succeeded { get; set; }
+        public bool HasErrors => !Succeeded;
 
-        public OperationResult() { }
-
-        public OperationResult(T value) 
-        { 
-            Value = value;
-        }        
-
-        public new OperationResult<T> AddError(string error)
+        private T _result;
+        public T Result
         {
-            base.AddError(error);
-
-            return this;
+            get => _result;
+            set => _result = value;
         }
 
-        public new OperationResult<T> AddPropertyError(string propertyName, string error)
+        public T Value
         {
-            base.AddPropertyError(propertyName, error);
+            get => _result;
+            set => _result = value;
+        }
 
-            return this;
+        public string Message { get; set; }
+
+        public static OperationResult<T> Success(T result)
+        {
+            return new OperationResult<T> { Succeeded = true, Result = result };
+        }
+
+        public static OperationResult<T> Failure(string message)
+        {
+            return new OperationResult<T> { Succeeded = false, Message = message };
+        }
+
+        public static OperationResult<T> NotFound(string message = "Not found")
+        {
+            return new OperationResult<T> { Succeeded = false, Message = message };
         }
     }
 }

@@ -1,14 +1,17 @@
 ﻿using MediatR;
+using KooliProjekt.Application.Infrastructure.Results;
+using KooliProjekt.Application.Infrastructure.Paging;
+using System.Threading;
+using System.Threading.Tasks;
+using KooliProjekt.Application.Dto;
 using Microsoft.AspNetCore.Mvc;
 using KooliProjekt.Application.Features.Tournaments.Queries;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace KooliProjekt.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TournamentsController : ApiControllerBase
+    public class TournamentsController : ControllerBase
     {
         private readonly IMediator _mediator;
 
@@ -18,14 +21,19 @@ namespace KooliProjekt.WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<TournamentDto>>> Get([FromQuery] GetTournamentsListQuery query)
+        public async Task<ActionResult<PagedResult<TournamentDto>>> Get([FromQuery] GetTournamentsListQuery query, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            var result = await _mediator.Send(query, cancellationToken);
+            if (!result.Succeeded)
+            {
+                return NotFound(result.Message);
+            }
+
+            return Ok(result.Result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<TournamentDto>> Get(int id)
+        public async Task<ActionResult<TournamentDto>> Get(int id, CancellationToken cancellationToken)
         {
             if (id <= 0)
             {
@@ -33,14 +41,14 @@ namespace KooliProjekt.WebAPI.Controllers
             }
 
             var query = new GetTournamentDetailsQuery { Id = id };
-            var result = await _mediator.Send(query);
+            var result = await _mediator.Send(query, cancellationToken);
 
-            if (result == null)
+            if (!result.Succeeded)
             {
-                return NotFound();
+                return NotFound(result.Message);
             }
 
-            return Ok(result);
+            return Ok(result.Result);
         }
     }
 }

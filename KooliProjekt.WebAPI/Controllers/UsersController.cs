@@ -1,14 +1,17 @@
 ﻿using MediatR;
+using KooliProjekt.Application.Infrastructure.Results;
+using KooliProjekt.Application.Infrastructure.Paging;
+using System.Threading;
+using System.Threading.Tasks;
+using KooliProjekt.Application.Dto;
 using Microsoft.AspNetCore.Mvc;
 using KooliProjekt.Application.Features.Users.Queries;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace KooliProjekt.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ApiControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly IMediator _mediator;
 
@@ -18,14 +21,19 @@ namespace KooliProjekt.WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<UserDto>>> Get([FromQuery] GetUsersListQuery query)
+        public async Task<ActionResult<PagedResult<UserDto>>> Get([FromQuery] GetUsersListQuery query, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            var result = await _mediator.Send(query, cancellationToken);
+            if (!result.Succeeded)
+            {
+                return NotFound(result.Message);
+            }
+
+            return Ok(result.Result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserDto>> Get(int id)
+        public async Task<ActionResult<UserDto>> Get(int id, CancellationToken cancellationToken)
         {
             if (id <= 0)
             {
@@ -33,14 +41,14 @@ namespace KooliProjekt.WebAPI.Controllers
             }
 
             var query = new GetUserDetailsQuery { Id = id };
-            var result = await _mediator.Send(query);
+            var result = await _mediator.Send(query, cancellationToken);
 
-            if (result == null)
+            if (!result.Succeeded)
             {
-                return NotFound();
+                return NotFound(result.Message);
             }
 
-            return Ok(result);
+            return Ok(result.Result);
         }
     }
 }

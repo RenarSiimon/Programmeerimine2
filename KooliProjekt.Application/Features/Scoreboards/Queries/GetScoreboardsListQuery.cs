@@ -1,19 +1,24 @@
-﻿using KooliProjekt.Application.Data;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+using KooliProjekt.Application.Data;
+using KooliProjekt.Application.Dto;
+using KooliProjekt.Application.Infrastructure.Results;
+using KooliProjekt.Application.Infrastructure.Paging;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using KooliProjekt.Application.Features.Prediction.Queries;
+using KooliProjekt.Application.Features.Teams.Queries;
 
 namespace KooliProjekt.Application.Features.Scoreboards.Queries
 {
-    public class GetTournamentsListQuery : IRequest<List<ScoreboardDto>>
+    public class GetScoreboardsListQuery : IRequest<OperationResult<PagedResult<ScoreboardDto>>>
     {
+        public int Page { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
     }
 
-    public class GetScoreboardsListQueryHandler : IRequestHandler<GetTournamentsListQuery, List<ScoreboardDto>>
+    public class GetScoreboardsListQueryHandler : IRequestHandler<GetScoreboardsListQuery, OperationResult<PagedResult<ScoreboardDto>>>
     {
         private readonly ApplicationDbContext _context;
 
@@ -22,23 +27,26 @@ namespace KooliProjekt.Application.Features.Scoreboards.Queries
             _context = context;
         }
 
-        public async Task<List<ScoreboardDto>> Handle(GetTournamentsListQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<PagedResult<ScoreboardDto>>> Handle(GetScoreboardsListQuery request, CancellationToken cancellationToken)
         {
-            return await _context.Scoreboards
-                .Select(s => new ScoreboardDto
-                {
-                    Id = s.Id,
-                    Place = s.Place,
-                    Points = s.Points
-                })
-                .ToListAsync(cancellationToken);
-        }
-    }
+            var query = _context.Scoreboards.AsQueryable();
+            var pagedEntities = await query.ToPagedResultAsync(request.Page, request.PageSize, cancellationToken);
 
-    public class ScoreboardDto
-    {
-        public int Id { get; set; }
-        public int Place { get; set; }
-        public int Points { get; set; }
+            var pagedResultDto = new PagedResult<ScoreboardDto>
+            {
+                PageIndex = pagedEntities.PageIndex,
+                PageSize = pagedEntities.PageSize,
+                TotalCount = pagedEntities.TotalCount,
+                TotalPages = pagedEntities.TotalPages,
+                Results = pagedEntities.Results.Select(x => new ScoreboardDto
+                {
+                    Id = x.Id,
+                    Place = x.Place,
+                    Points = x.Points
+                }).ToList()
+            };
+
+            return OperationResult<PagedResult<ScoreboardDto>>.Success(pagedResultDto);
+        }
     }
 }

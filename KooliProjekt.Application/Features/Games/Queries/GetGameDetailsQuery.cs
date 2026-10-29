@@ -1,18 +1,21 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using KooliProjekt.Application.Data;
+using KooliProjekt.Application.Infrastructure.Results;
+using KooliProjekt.Application.Infrastructure.Paging;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using KooliProjekt.Application.Dto;
 
 namespace KooliProjekt.Application.Features.Games.Queries
 {
-    public class GetGameDetailsQuery : IRequest<GameDto>
+    public class GetGameDetailsQuery : IRequest<OperationResult<GameDto>>
     {
         public int Id { get; set; }
     }
 
-    public class GetGameDetailsQueryHandler : IRequestHandler<GetGameDetailsQuery, GameDto>
+    public class GetGameDetailsQueryHandler : IRequestHandler<GetGameDetailsQuery, OperationResult<GameDto>>
     {
         private readonly ApplicationDbContext _context;
 
@@ -21,15 +24,22 @@ namespace KooliProjekt.Application.Features.Games.Queries
             _context = context;
         }
 
-        public async Task<GameDto> Handle(GetGameDetailsQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<GameDto>> Handle(GetGameDetailsQuery request, CancellationToken cancellationToken)
         {
-            return await _context.Games
+            var entity = await _context.Games
                 .Where(g => g.Id == request.Id)
                 .Select(g => new GameDto
                 {
                     Id = g.Id
                 })
                 .FirstOrDefaultAsync(cancellationToken);
+
+            if (entity == null)
+            {
+                return OperationResult<GameDto>.NotFound("Game not found.");
+            }
+
+            return OperationResult<GameDto>.Success(entity);
         }
     }
 }

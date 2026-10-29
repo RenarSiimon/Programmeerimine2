@@ -1,15 +1,17 @@
-﻿using KooliProjekt.Application.Features.Games.Queries;
-using KooliProjekt.Application.Features.Scoreboards.Queries;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+﻿using MediatR;
+using KooliProjekt.Application.Infrastructure.Results;
+using KooliProjekt.Application.Infrastructure.Paging;
+using System.Threading;
 using System.Threading.Tasks;
+using KooliProjekt.Application.Dto;
+using Microsoft.AspNetCore.Mvc;
+using KooliProjekt.Application.Features.Scoreboards.Queries;
 
 namespace KooliProjekt.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ScoreboardsController : ControllerBase // 5. Pärineb baaskontrollerist
+    public class ScoreboardsController : ControllerBase
     {
         private readonly IMediator _mediator;
 
@@ -18,34 +20,35 @@ namespace KooliProjekt.WebAPI.Controllers
             _mediator = mediator;
         }
 
-        // 6. List meetod
         [HttpGet]
-        public async Task<ActionResult<List<ScoreboardDto>>> Get([FromQuery] GetGamesListQuery query)
+        public async Task<ActionResult<PagedResult<ScoreboardDto>>> Get([FromQuery] GetScoreboardsListQuery query, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(query);
-            return Ok(result); // 7. Küsib andmeid, mis on olemas või pole (tagastab listi)
+            var result = await _mediator.Send(query, cancellationToken);
+            if (!result.Succeeded)
+            {
+                return NotFound(result.Message);
+            }
+
+            return Ok(result.Result);
         }
 
-        // 6. Get meetod ühe kirje jaoks
         [HttpGet("{id}")]
-        public async Task<ActionResult<ScoreboardDto>> Get(int id)
+        public async Task<ActionResult<ScoreboardDto>> Get(int id, CancellationToken cancellationToken)
         {
-            // 8. Kontrolli kontrolleris, et Id poleks null või sellest väiksem
             if (id <= 0)
             {
                 return NotFound();
             }
 
-            var query = new GetPredictionDetailsQuery { Id = id };
-            var result = await _mediator.Send(query);
+            var query = new GetScoreboardDetailsQuery { Id = id };
+            var result = await _mediator.Send(query, cancellationToken);
 
-            // 9. Kui mediatori Send() tagastas nulli, tagasta NotFound
-            if (result == null)
+            if (!result.Succeeded)
             {
-                return NotFound();
+                return NotFound(result.Message);
             }
 
-            return Ok(result); // 7. & 10. Tagastab leitud kirje
+            return Ok(result.Result);
         }
     }
 }
