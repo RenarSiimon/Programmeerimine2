@@ -4,14 +4,18 @@ namespace KooliProjekt.Application.Infrastructure.Results
 {
     public class OperationResult
     {
+        public bool Succeeded { get; set; } = true;
+        public string Message { get; set; }
+
         public IDictionary<string, string> PropertyErrors { get; private set; }
         public IList<string> Errors { get; private set; }
 
-        public bool HasErrors 
+        public bool HasErrors
         {
             get
             {
-                return PropertyErrors?.Count > 0 ||
+                return !Succeeded ||
+                       PropertyErrors?.Count > 0 ||
                        Errors?.Count > 0;
             }
         }
@@ -23,6 +27,7 @@ namespace KooliProjekt.Application.Infrastructure.Results
 
         public OperationResult AddError(string error)
         {
+            Succeeded = false;
             if (Errors == null)
             {
                 Errors = new List<string>();
@@ -35,6 +40,7 @@ namespace KooliProjekt.Application.Infrastructure.Results
 
         public OperationResult AddPropertyError(string property, string error)
         {
+            Succeeded = false;
             if (PropertyErrors == null)
             {
                 PropertyErrors = new Dictionary<string, string>();
@@ -47,6 +53,25 @@ namespace KooliProjekt.Application.Infrastructure.Results
             PropertyErrors.Add(property, error);
 
             return this;
+        }
+
+        public static OperationResult Success()
+        {
+            return new OperationResult { Succeeded = true };
+        }
+
+        public static OperationResult Failure(string message)
+        {
+            var result = new OperationResult { Succeeded = false, Message = message };
+            result.AddError(message);
+            return result;
+        }
+
+        public static OperationResult NotFound(string message = "Not found")
+        {
+            var result = new OperationResult { Succeeded = false, Message = message };
+            result.AddError(message);
+            return result;
         }
     }
 }

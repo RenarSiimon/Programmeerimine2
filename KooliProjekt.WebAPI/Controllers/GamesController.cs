@@ -1,14 +1,11 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
-using KooliProjekt.Application.Data;
-using KooliProjekt.Application.Infrastructure.Results;
+using Microsoft.AspNetCore.Mvc;
+using KooliProjekt.Application.Dto;
 using KooliProjekt.Application.Infrastructure.Paging;
-using System.Linq;
+using KooliProjekt.Application.Features.Games.Queries;
+using KooliProjekt.Application.Features.Games.Commands;
 using System.Threading;
 using System.Threading.Tasks;
-using KooliProjekt.Application.Dto;
-using Microsoft.AspNetCore.Mvc;
-using KooliProjekt.Application.Features.Games.Queries;
 
 namespace KooliProjekt.WebAPI.Controllers
 {
@@ -52,6 +49,31 @@ namespace KooliProjekt.WebAPI.Controllers
             }
 
             return Ok(result.Result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] SaveGameCommand command, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(command, cancellationToken);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Ok(result.Result);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+        {
+            var command = new DeleteGameCommand { Id = id };
+            var result = await _mediator.Send(command, cancellationToken);
+            if (!result.Succeeded)
+            {
+                return NotFound(result.Message);
+            }
+
+            return NoContent();
         }
     }
 }
