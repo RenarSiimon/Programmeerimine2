@@ -1,10 +1,7 @@
 ﻿namespace KooliProjekt.Application.Infrastructure.Results
 {
-    public class OperationResult<T>
+    public class OperationResult<T> : OperationResult
     {
-        public bool Succeeded { get; set; }
-        public bool HasErrors => !Succeeded;
-
         private T _result;
         public T Result
         {
@@ -27,12 +24,16 @@
 
         public static OperationResult<T> Failure(string message)
         {
-            return new OperationResult<T> { Succeeded = false, Message = message };
+            var result = new OperationResult<T> { Succeeded = false, Message = message };
+            result.AddError(message);
+            return result;
         }
 
         public static OperationResult<T> NotFound(string message = "Not found")
         {
-            return new OperationResult<T> { Succeeded = false, Message = message };
+            var result = new OperationResult<T> { Succeeded = false, Message = message };
+            result.AddError(message);
+            return result;
         }
     }
 }

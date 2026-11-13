@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using KooliProjekt.Application.Dto;
 using KooliProjekt.Application.Infrastructure.Paging;
@@ -68,6 +69,58 @@ namespace KooliProjekt.WebAPI.Controllers
         {
             var command = new DeleteTeamCommand { Id = id };
             var result = await _mediator.Send(command, cancellationToken);
+            if (!result.Succeeded)
+            {
+                return NotFound(result.Message);
+            }
+
+            return NoContent();
+        }
+
+        [HttpPost("{id}/files")]
+        [Consumes("multipart/form-data")]
+        [RequestSizeLimit(5 * 1024 * 1024)]
+        public async Task<IActionResult> AddFile(int id, IFormFile file, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new AddFileCommand { TeamId = id, File = file }, cancellationToken);
+            if (!result.Succeeded)
+            {
+                return result.Message == "Team not found."
+                    ? NotFound(result.Message)
+                    : BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpGet("{id}/files")]
+        public async Task<IActionResult> ListFiles(int id, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new ListFilesQuery { TeamId = id }, cancellationToken);
+            if (!result.Succeeded)
+            {
+                return NotFound(result.Message);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpGet("{id}/files/{fileName}")]
+        public async Task<IActionResult> GetFile(int id, string fileName, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new GetFileQuery { TeamId = id, FileName = fileName }, cancellationToken);
+            if (!result.Succeeded)
+            {
+                return NotFound(result.Message);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpDelete("{id}/files/{fileName}")]
+        public async Task<IActionResult> DeleteFile(int id, string fileName, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new DeleteFileCommand { TeamId = id, FileName = fileName }, cancellationToken);
             if (!result.Succeeded)
             {
                 return NotFound(result.Message);

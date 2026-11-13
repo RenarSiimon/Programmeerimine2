@@ -1,6 +1,7 @@
 using FluentValidation;
 using KooliProjekt.Application.Behaviors;
 using KooliProjekt.Application.Data;
+using KooliProjekt.Application.Infrastructure.Files;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +22,10 @@ namespace KooliProjekt.WebAPI
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
+
+            builder.Services.AddSingleton<FileStore>(services =>
+                new FileStore(System.IO.Path.Combine(builder.Environment.ContentRootPath, "App_Data", "team-files")));
+            builder.Services.AddSingleton<IFileClient, LocalFileClient>();
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
