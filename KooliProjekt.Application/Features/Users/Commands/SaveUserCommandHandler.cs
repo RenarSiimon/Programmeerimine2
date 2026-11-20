@@ -35,6 +35,7 @@ namespace KooliProjekt.Application.Features.Users.Commands
             }
 
             user.Username = request.Username;
+            user.IsAdmin = request.IsAdmin;
 
             await _context.SaveChangesAsync(cancellationToken);
 
